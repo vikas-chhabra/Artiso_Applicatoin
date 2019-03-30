@@ -1,9 +1,9 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": 19000,
-  "packagerPort": 19001,
-  "packagerPid": 7710,
-  "expoServerNgrokUrl": "https://kc-yaz.vchhabra.artiso.exp.direct",
-  "packagerNgrokUrl": "https://packager.kc-yaz.vchhabra.artiso.exp.direct",
-  "ngrokPid": 7765
+  "expoServerPort": null,
+  "packagerPort": null,
+  "packagerPid": null,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null
 }

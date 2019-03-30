@@ -1,5 +1,5 @@
 import React from "react";
-import { AppRegistry, Image, StatusBar, AsyncStorage } from "react-native";
+import { AppRegistry, Image, StatusBar, AsyncStorage, Alert } from "react-native";
 import { Container, Content, Text, List, ListItem } from "native-base";
 
 const routes = ["Profile", "Home", "About"];
@@ -7,17 +7,20 @@ const routes = ["Profile", "Home", "About"];
 export default class SideBar extends React.Component {
   constructor(props){
     super(props);
-    console.log(this.props.navigation)
+    this.state={
+      member_type:''
+    }
   }
   _retrieveData = async () => {
     try {
-      const value = await AsyncStorage.getItem('artist');
+      const value = await AsyncStorage.getItem('member_type');
       if (value !== null) {
-        // We have data!!
-        console.log(value);
+        this.setState({
+          member_type:value
+        })
       }
     } catch (error) {
-      // Error retrieving data
+      Alert.alert("Something went wrong at our servers, Please try again later")
     }
   };
   componentWillMount(){

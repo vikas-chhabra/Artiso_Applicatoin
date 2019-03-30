@@ -1,7 +1,8 @@
+import {Alert} from 'react-native';
+
 export default class Fetch {
     
-    // static Base_URL="http://192.168.43.67:3001/"
-    static Base_URL="http://predot.xyz:3001/"
+    static Base_URL="http://192.168.43.67:3002/"
 
     static post(url, body) {
         return new Promise((resolve, reject) => {
