@@ -10,6 +10,10 @@ import { AsyncStorage } from 'react-native';
 import FullView from './views/InvisibleStack/FullView';
 import HomeEnthusiast from './views/BaseDrawerNavigator/HomeEnthusiast';
 import Interests from './views/InvisibleStack/Interests';
+import AddPosts from './views/BaseDrawerNavigator/AddPosts';
+import EditProfile from './views/BaseDrawerNavigator/EditProfile';
+import Recomended from './views/BaseDrawerNavigator/Recomended';
+import Cart from './views/BaseDrawerNavigator/Cart';
 
 const _retrieveData = async () => {
   try {
@@ -84,21 +88,34 @@ const BaseDrawerNavigator = createDrawerNavigator({
   DashboardEnthusiast:{
     screen:HomeEnthusiast
   },
-  ProfileArtist: {
-    screen: BaseBottomTabNavigator
-  },
   ProfileEnthusiast: {
     screen: Profile
+  },
+  Interests:{
+    screen:Interests
   },
   FullViewOfPostDrawer: {
     screen: InvisibleStack
   },
+  AddPosts:{
+    screen:AddPosts
+  },
+  EditProfile:{
+    screen:EditProfile
+  },
+  RecomendedPosts:{
+    screen:Recomended
+  },
+  Cart:{
+    screen:Cart
+  }
 }, {
     contentComponent: ({ navigation }) => (
-      <DrawerComponent navigation={navigation} />
+      <DrawerComponent navigation={navigation}/>
     ),
     drawerType: 'slide',
     drawerPosition: 'right',
+    unmountInactiveRoutes: true
   }
 )
 

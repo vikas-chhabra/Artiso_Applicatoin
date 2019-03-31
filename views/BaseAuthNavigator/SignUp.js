@@ -42,7 +42,6 @@ export default class SignUp extends Component {
             member_type_frontend = 'enthusiastic'
         }
         Fetch.post(this.state.signUpRoute, { username: this.state.username, password: this.state.password, phone_number: this.state.phonenumber, full_name: this.state.fullname, member_type: member_type_frontend }).then(res => {
-            console.log(res)
             if (res.response) {
                 this.toggleLoader()
                 this.props.navigation.push('Login');
@@ -59,7 +58,6 @@ export default class SignUp extends Component {
         })
     }
     handlePickerInput(value) {
-        console.log(value)
         this.setState({
             selectedPickerValue: value
         });

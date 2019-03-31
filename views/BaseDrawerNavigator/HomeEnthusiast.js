@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, ScrollView, StatusBar, ImageBackground, TouchableOpacity, TouchableNativeFeedback, TextInput, Image, Alert, Animated, AsyncStorage} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, StatusBar, RefreshControl, TouchableOpacity, TouchableNativeFeedback, TextInput, Image, Alert, Animated, AsyncStorage} from 'react-native';
 import { Container, Header, Content, Button, Icon, Left, Right,  } from 'native-base';
-import {Font, AppLoading} from 'expo';
+import {Font, AppLoading, } from 'expo';
 import MyIcon from '@expo/vector-icons/Feather'
 import Fetch from '../../helper/Fetch'
+import { underline } from 'ansi-colors';
 
 export default class HomeEnthusiast extends Component {
   static navigationOption = {
@@ -17,8 +18,14 @@ export default class HomeEnthusiast extends Component {
     this.state={
       isReady:false,
         postsRoute:'post/get-all',
-        posts:[]
+        posts:[],
+        refreshing:false
     }
+  }
+  _onRefresh = () => {
+    this.setState({refreshing: true});
+    this.getToken();
+    this.setState({refreshing: false});
   }
   async componentWillMount() {
     await Font.loadAsync({
@@ -29,19 +36,18 @@ export default class HomeEnthusiast extends Component {
 }
 getPosts = (token) => {
     Fetch.post(this.state.postsRoute, {}, token).then(res => {
-        console.log(res);
         if(res.response===true){
             this.setState({
                 posts:res.posts
             })
         }
         else{
-            Alert.alert("Something went wrong Please try again later");
+            Alert.alert(res.msg);
+            this.props.navigation.navigate('Interests')
         }
     })
 }
 getToken = async () => {
-    console.log("FUnction called")
     const token = await AsyncStorage.getItem('token')
     this.getPosts(token)
 }
@@ -63,32 +69,39 @@ componentDidMount(){
             </View>
           </Left>
           <Right>
-            <Button transparent>
+            <Button transparent onPress={()=>{this.props.navigation.toggleDrawer()}}>
               <Icon name='menu' style={{color:'#fff'}}/>
             </Button>
           </Right>
         </Header>
-        <Content>
+        <Content
+            refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this._onRefresh}
+                />
+              }
+        >
         {
             this.state.posts.map((v,i)=>{
                 return(
-                    <TouchableOpacity key={i} onPress={(e)=>{this.props.navigation.navigate('FullViewOfPostDrawer',{post_id:v._id})}}>
+                    <TouchableOpacity key={i} onPress={(e)=>{this.props.navigation.navigate('FullViewOfPost',{post_id:v._id})}}>
 
                 <View style={styles.row1}>
                     <View style={{ flex: 0.95, flexDirection: 'column' }}>
                         <View style={{ flex: 0.15, flexDirection: 'row', justifyContent: 'flex-start' }}>
-                            <Text style={{ alignSelf: 'center', fontSize: 17, fontWeight: '600', color: '#000', marginLeft: 7, }}>{v.category.category_name}</Text>
+                            {v.category===undefined?(<Text style={{ alignSelf: 'center', fontSize: 17, fontWeight: '600', color: '#000', marginLeft: 7, }}>{v.category.category_name}</Text>):(<Text style={{ alignSelf: 'center', fontSize: 17, fontWeight: '600', color: '#000', marginLeft: 7, }}>Loading...</Text>)}
                         </View>
                         <View style={{ flex: 0.6, flexDirection: 'row' }}>
                             <View style={{ flex: 0.65, flexDirection: 'column', justifyContent: 'space-around' }}>
                                 <View style={{ flex: 0.05, flexDirection: 'row', }}>
 
                                 </View>
-                                <View style={{ flex: 0.4, flexDirection: 'row' }}>
-                                    <Text style={{ fontSize: 20, color: '#000', fontWeight: '300' }} ellipsizeMode='tail' numberOfLines={2}>{v.title}</Text>
+                                <View style={{ flex: 0.18, flexDirection: 'row' }}>
+                                    <Text style={{ fontSize: 20, color: '#000', fontWeight: '300' }} ellipsizeMode='tail' numberOfLines={1}>{v.title}</Text>
                                 </View>
-                                <View style={{ flex: 0.2, flexDirection: 'row', }}>
-                                    <Text style={{ fontSize: 17, color: 'rgb(113,117,128)', fontWeight: '600' }} ellipsizeMode='tail' numberOfLines={1}>{v.description}</Text>
+                                <View style={{ flex: 0.15, flexDirection: 'row', }}>
+                                    <Text style={{ fontSize: 16, color: 'rgb(113,117,128)', fontWeight: '600' }} ellipsizeMode='tail' numberOfLines={1}>{v.description}</Text>
 
                                 </View>
                                 <View style={{ flex: 0.05, flexDirection: 'row', }}>
@@ -106,13 +119,13 @@ componentDidMount(){
                                     <Text style={{fontSize:16,color:'#000'}}>{v.member.full_name}</Text>
                                 </View>
                                 <View style={{ flex: 0.4, flexDirection: 'row' }}>
-                                    <Text style={{fontSize:16,color:'rgb(113,117,128)'}}>{v.member.createdAt}</Text>
+                                    <Text style={{fontSize:19,color:'rgb(113,117,128)'}}>₹ {v.price}</Text>
                                 </View>
                                 <View></View>
                             </View>
-                            <View style={{ flex: 0.2, flexDirection: 'column', justifyContent: 'space-around' }}>
+                            <View style={{ flex: 0.3, flexDirection: 'column', justifyContent: 'space-around' }}>
                                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
-                                    <MyIcon name="bookmark" size={30} color="rgb(113,117,128)" style={{ alignSelf: 'flex-end',marginRight: 6, }} />
+                                    <Text style={{ alignSelf: 'flex-end',marginRight: 6, fontSize:18, color:"rgb(113,117,128)"}} >See more</Text>
                                 </View>
                             </View>
                         </View>

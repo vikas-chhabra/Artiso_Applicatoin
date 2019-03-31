@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Container, Header, Content, List, ListItem, Thumbnail, Text, Left, Body, Right, Button, Icon } from 'native-base';
-import { AsyncStorage, StatusBar, Alert } from 'react-native';
+import { AsyncStorage, StatusBar, Alert, RefreshControl } from 'react-native';
 import Fetch from '../../helper/Fetch';
 import {AppLoading, Font} from 'expo';
 
@@ -9,34 +9,36 @@ export default class Interests extends Component {
         super(props);
         this.state = {
             categoryRoute: 'category/get',
-            categories: [],
+            categories: [{category_name:'',_id:'',category_poster}],
             token: '',
-            isReady:false
+            isReady:false,
+            refreshing:false
         };
     }
+    _onRefresh = () => {
+        this.setState({refreshing: true});
+        this.getToken();
+        this.setState({refreshing: false});
+      }
     getToken = async () => {
-        console.log("FUnction called")
         const token = await AsyncStorage.getItem('token')
         this.getCategories(token)
     }
     getCategories = (token) => {
         Fetch.post(this.state.categoryRoute, {}, token).then(res => {
-            console.log(res);
             if (res.response) {
                 this.setState({
                     categories: res.categories
                 })
             }
             else {
-                console.log(res)
+                Alert.alert(res.msg);
             }
         })
     }
     sendInterest=async (category_id)=>{
-        console.log(category_id)
         const token = await AsyncStorage.getItem('token')
-        Fetch.post('interest/toggle',{category_id:category_id},token).then(res=>{
-            console.log(res);
+        Fetch.post('interest/toggle',{category_id:category_id},token).then(res=>{;
             this.getCategories(token);
         })
     }
@@ -65,12 +67,19 @@ export default class Interests extends Component {
                         <Text>Categories</Text>
                     </Body>
                     <Right>
-                        <Button transparent onPress={()=>{this.props.navigation.navigate('DashboardEnthusiast')}}>
+                        <Button transparent onPress={()=>{this.props.navigation.toggleDrawer()}}>
                             <Icon name='menu' style={{ color: '#fff' }} />
                         </Button>
                     </Right>
                 </Header>
-                <Content>
+                <Content
+                    refreshControl={
+                        <RefreshControl
+                          refreshing={this.state.refreshing}
+                          onRefresh={this._onRefresh}
+                        />
+                      }
+                >
                     <List>
                         {
                             this.state.categories.map((v, i) => {

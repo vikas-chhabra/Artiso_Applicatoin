@@ -24,7 +24,7 @@ export default class Login extends Component {
     }
     checkLogin=async()=>{
         const token = await AsyncStorage.getItem('token')
-        if(token!==undefined||token!==''){
+        if(token!==null){
             this.props.navigation.navigate('DashboardEnthusiast')
         }
     }
@@ -39,10 +39,11 @@ export default class Login extends Component {
             loader: false
         })
     }
-    _saveToAsync = async (token,type) => {
+    _saveToAsync = async (token,type,name) => {
         try {
           await AsyncStorage.setItem('token', token);
           await AsyncStorage.setItem('member_type',type )
+          await AsyncStorage.setItem('name',name )
         } catch (error) {
           Alert.alert("Something went wrong, Please try again later")
         }
@@ -52,17 +53,16 @@ export default class Login extends Component {
             loader: true
         })
         Fetch.post(this.state.loginRoute, { username_phone_number: this.state.username_phone, password: this.state.password }).then(res => {
-            console.log(res)
             this.setState({
                 loader: false
             })
             if (res.response) {
-                this._saveToAsync(res.token,res.member_type);
-                if(res.is_interests_selected){
-                    this.props.navigation.navigate('DashboardEnthusiast')
+                this._saveToAsync(res.token,res.member_type, res.full_name);
+                if(res.is_interest_selected===true){
+                    this.props.navigation.navigate('DashboardEnthusiast');
                 }
-                {
-                    this.props.navigation.push('selectInterests');
+                else{
+                    this.props.navigation.push('selectInterests')
                 }
             } else {
                 this.setState({
@@ -129,6 +129,15 @@ export default class Login extends Component {
                                             </View>
                                         </View>
                                     </View>
+                                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('ForgotPassword')}>
+                                                <View style={{flex: 0.25, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 10,height:40}}>
+                                                <View style={{ flex: 0.9, flexDirecction: 'column', justifyContent: 'flex-start', alignItems: 'flex-start',marginLeft:10}}>
+                                                    <Text style={{}}>
+                                                        Forget Password?
+                                                    </Text>
+                                                </View>
+                                                </View>
+                                            </TouchableOpacity>
                                     <View style={styles.row3}>
                                         {
                                             (this.state.username_phone ==='' && this.state.password ==='') ?

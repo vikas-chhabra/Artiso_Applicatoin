@@ -87,7 +87,7 @@ export default class ForgetPassword extends Component {
                                             <TouchableOpacity onPress={this.login} >
                                                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', borderRadius: 4, elevation: 3, backgroundColor: "#9368e9", height: 50 }} >
                                                     <View style={{ flexDirection: 'column', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', width: Dimensions.get('window').width - 30 }}>
-                                                        <Text style={{ alignSelf: 'center', fontSize: 19, color: '#fff', }}>Log In</Text>
+                                                        <Text style={{ alignSelf: 'center', fontSize: 19, color: '#fff', }}>Send Otp</Text>
                                                     </View>
                                                 </View>
                                             </TouchableOpacity>
